@@ -1,0 +1,11 @@
+[client]
+node01
+
+[aggregator]
+node02
+
+[watcher-master]
+node03
+
+[watcher-slave]
+node04
