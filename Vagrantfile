@@ -2,9 +2,6 @@ ENV["LC_ALL"] = "en_US.UTF-8"
 Vagrant.configure(2) do |config|
   config.vm.box = "centos/7"
 
-  config.vm.provision "shell", :inline => 'sudo yum install -y  yum -y install yum-plugin-fastestmirror'
-  config.vm.provision "shell", :inline => 'sudo yum groupinstall -y "Development Tools"'
-
   config.vm.define :node01 do |node|
     node.vm.hostname = "node01"
     node.vm.network :private_network, ip: "192.168.11.11"
