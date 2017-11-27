@@ -5,6 +5,13 @@
   - name: install fluentd repository
     shell: curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh
 
+  - name: install required gem
+    shell: "/opt/td-agent/embedded/bin/fluent-gem install {{ item }}"
+    with_items:
+      - fluent-plugin-slack
+      - fluent-plugin-ping-message
+      - fluent-plugin-file-alternative
+
   - name: Copy td-agent.conf
     template:
       src: templates/watcher-slave.conf.j2
@@ -13,7 +20,7 @@
       group: root
       mode: '0644'
       backup: yes
-    when: inventory_hostname == 'node04'
+    when: inventory_hostname == 'node05'
 
   - name: Copy td-agent.conf
     template:
@@ -23,17 +30,27 @@
       group: root
       mode: '0644'
       backup: yes
-    when: inventory_hostname == 'node03'
+    when: inventory_hostname == 'node04'
 
   - name: Copy td-agent.conf
     copy:
-      src: files/aggregator.conf
+      src: files/aggregator-master.conf
       dest: /etc/td-agent/td-agent.conf
       owner: root
       group: root
       mode: '0644'
       backup: yes
     when: inventory_hostname == 'node02'
+
+  - name: Copy td-agent.conf
+    copy:
+      src: files/aggregator-slave.conf
+      dest: /etc/td-agent/td-agent.conf
+      owner: root
+      group: root
+      mode: '0644'
+      backup: yes
+    when: inventory_hostname == 'node03'
 
   - name: Copy td-agent.conf
     copy:

@@ -14,20 +14,35 @@
   bind 0.0.0.0
 </source>
 
-<match ping.**>
+<match ping.*>
   @type copy
   <store>
-  @type ping_message_checker
-  tag  alert.ping_message
-  check_interval 600      #default 3600
-  notification_times 3
-  notifications yes
+    @type ping_message_checker
+    tag  alert.ping_message
+    check_interval 600      #default 3600
+    notification_times 3
+    notifications yes
+  </store>
+  <store>
+    @type file_alternative
+    path /var/log/td-agent/ping.log.%Y%m%d
+    time_slice_format %Y%m%d
+    time_format %Y-%m-%d %H:%M:%S %z"
+
+    buffer_type file
+    flush_interval 1s
+
+    output_include_time true
+    output_include_tag false
+    output_data_type attr:data
+    add_newline        true
   </store>
 </match>
 
 <match alert.ping_message>
     @type slack
     webhook_url {{ url }}
+
     channel #infra
     username s
     icon_emoji :x:
@@ -39,33 +54,48 @@
 
 <source>
   @type ping_message
-  tag watcher.active
+  tag ping.watcher.active
   data ${hostname}
   interval 30
 </source>
 
-<match watcher.active>
+<match ping.watcher.active>
   @type forward
   <server>
-   name node04
-   host 192.168.11.14
+   name node05
+   host 192.168.11.15
   </server>
 </match>
 
-<match watcher.standby>
+<match ping.watcher.standby>
   @type copy
   <store>
   @type ping_message_checker
-  tag  watcher.ping_message
-  check_interval 600      #default 3600
-  notification_times 3
-  notifications yes
+    tag  watcher.ping_message
+    check_interval 600      #default 3600
+    notification_times 3
+    notifications yes
+  </store>
+  <store>
+    @type file_alternative
+    path /var/log/td-agent/ping.watcher.log.%Y%m%d
+    time_slice_format %Y%m%d
+    time_format %Y-%m-%d %H:%M:%S %z"
+
+    buffer_type file
+    flush_interval 1s
+
+    output_include_time true
+    output_include_tag false
+    output_data_type attr:data
+    add_newline        true
   </store>
 </match>
 
 <match watcher.ping_message>
     @type slack
     webhook_url {{ url }}
+
     channel #infra
     username s
     icon_emoji :x:
