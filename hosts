@@ -3,9 +3,10 @@ node01
 
 [aggregator]
 node02
-
-[watcher-master]
 node03
 
-[watcher-slave]
+[watcher-master]
 node04
+
+[watcher-slave]
+node05
