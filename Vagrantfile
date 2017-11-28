@@ -40,4 +40,9 @@ Vagrant.configure(2) do |config|
     node.vm.network :private_network, ip: "192.168.11.14"
   end
 
+  config.vm.define :node05 do |node|
+    node.vm.hostname = "node05"
+    node.vm.network :private_network, ip: "192.168.11.15"
+  end
+
 end
