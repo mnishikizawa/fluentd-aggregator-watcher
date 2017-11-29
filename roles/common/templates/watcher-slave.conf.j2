@@ -19,7 +19,7 @@
   <store>
     @type ping_message_checker
     tag  alert.ping_message
-    check_interval 600      #default 3600
+    check_interval 300      #default 3600
     notification_times 3
     notifications yes
   </store>
@@ -40,9 +40,10 @@
 </match>
 
 <match alert.ping_message>
+  @type copy
+  <store>
     @type slack
     webhook_url {{ url }}
-
     channel #infra
     username s
     icon_emoji :x:
@@ -50,6 +51,16 @@
     message Fluentd node has down :%s
     message_keys data
     flush_interval 1m
+  </store>
+  <store>
+    @type file_alternative
+    path /var/log/td-agent/missing.ping.log.%Y%m%d
+    time_slice_format %Y%m%d
+    flush_interval 1s
+    output_include_time true
+    output_include_tag false
+    output_data_type attr:data
+  </store>
 </match>
 
 <source>
